@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filemon", "Filemon\Filemon.csproj", "{D1C155BC-2122-4399-B0A6-FFC79F475D89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filemon.OverWatch", "Filemon.OverWatch\Filemon.OverWatch.csproj", "{210E8C6C-5305-46AD-894B-27B3DD50C371}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1C155BC-2122-4399-B0A6-FFC79F475D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C155BC-2122-4399-B0A6-FFC79F475D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C155BC-2122-4399-B0A6-FFC79F475D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C155BC-2122-4399-B0A6-FFC79F475D89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{210E8C6C-5305-46AD-894B-27B3DD50C371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{210E8C6C-5305-46AD-894B-27B3DD50C371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{210E8C6C-5305-46AD-894B-27B3DD50C371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{210E8C6C-5305-46AD-894B-27B3DD50C371}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A268CC0-A1BE-4E61-AF01-91A6587F5A3D}
+	EndGlobalSection
+EndGlobal
