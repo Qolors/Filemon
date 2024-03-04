@@ -1,7 +1,7 @@
 ﻿using Filemon.OverWatch.Helpers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
+using System.IO.Pipes;
 
 namespace Filemon.OverWatch
 {
@@ -38,10 +38,38 @@ namespace Filemon.OverWatch
 
             while (true)
             {
-                // todo --> monitoring logic
+                using (var serverClient = new NamedPipeServerStream("FilemonPipe"))
+                {
+                    serverClient.WaitForConnection();
+                    
+                    try
+                    {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = serverClient.Read(buffer, 0, buffer.Length);
 
-                System.Threading.Thread.Sleep(1000); // Reduce CPU usage
-            }
+                        string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                        if (message == "status")
+                        {
+                            string response = "Running";
+                            byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes(response);
+                            serverClient.Write(responseBytes, 0, responseBytes.Length);
+                        }
+                        else if (message == "kill")
+                        {
+                            string response = "stopped";
+                            byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes(response);
+                            serverClient.Write(responseBytes, 0, responseBytes.Length);
+                            
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteToLog("Error processing client: " + ex.Message);
+                    }
+                }
+            }   
         }
 
         private static void OnChanged(object sender, FileSystemEventArgs e, Dictionary<string, string> ruleSets)

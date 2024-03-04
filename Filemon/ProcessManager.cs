@@ -1,8 +1,5 @@
-﻿using Microsoft.VisualBasic;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Diagnostics;
+using System.IO.Pipes;
 
 namespace Filemon
 {
@@ -10,41 +7,63 @@ namespace Filemon
     {
         public static void Status()
         {
-            if (File.Exists(Constants.FilemonFileName))
+            try
             {
-                Console.WriteLine("Filemon is Running");
+                using (var pipeClient = new NamedPipeClientStream("FilemonPipe"))
+                {
+                    pipeClient.Connect(1000);
+
+                    if (pipeClient.IsConnected)
+                    {
+                        string message = "status";
+
+                        byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
+                        pipeClient.Write(messageBytes, 0, messageBytes.Length);
+
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = pipeClient.Read(buffer, 0, buffer.Length);
+
+                        string response = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                        Console.WriteLine("Filemon Status: " + response);
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Filemon is Not Running");
-            }
+                Console.WriteLine("Filemon Status: Not Running");
+            }   
         }
 
         public static void Kill()
         {
+            Console.WriteLine("Attemping to shut down Filemon...");
+
             try
             {
-                if (File.Exists(Constants.FilemonFileName))
+               using (var pipeClient = new NamedPipeClientStream("FilemonPipe"))
                 {
-                    var lines = File.ReadLines(Constants.FilemonFileName).ToList();
-                    if (lines.Count > 0)
-                    {
-                        Console.WriteLine("Filemon is Running");
-                        var readProcess = int.TryParse(lines.First(), out int id);
+                    pipeClient.Connect(1000);
 
-                        if (readProcess)
-                        {
-                            Console.WriteLine("Killing Process: " + id);
-                            Process.GetProcessById(id)?.Kill();
-                        }
+                    if (pipeClient.IsConnected)
+                    {
+                        string message = "kill";
+
+                        byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
+                        pipeClient.Write(messageBytes, 0, messageBytes.Length);
+
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = pipeClient.Read(buffer, 0, buffer.Length);
+
+                        string response = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                        Console.WriteLine(response);
                     }
-                    else
+                    else if (!pipeClient.IsConnected)
                     {
                         Console.WriteLine("Filemon is Not Running");
                     }
-
-                    File.Delete(Constants.FilemonFileName);
-                }
+                } 
             }
             catch (Exception ex)
             {
@@ -56,26 +75,19 @@ namespace Filemon
         {
             try
             {
-                if (File.Exists(Constants.FilemonFileName))
+               using (var pipeClient = new NamedPipeClientStream("FilemonPipe"))
                 {
-                    var lines = File.ReadLines(Constants.FilemonFileName).ToList();
-                    if (lines.Count > 0)
-                    {
-                        Console.WriteLine("Filemon is Already Running");
-                        var readProcess = int.TryParse(lines.First(), out int id);
+                    pipeClient.Connect(1000);
 
-                        if (readProcess)
-                        {
-                            Console.WriteLine("Finding/Killing Process: " + id);
-                            Process.GetProcessById(id)?.Kill();
-                        }
-                    }
-                    else
+                    if (pipeClient.IsConnected)
                     {
-                        Console.WriteLine("Filemon is Not Running");
+                        Console.WriteLine("Filemon is already running");
                     }
-                }
-
+                    
+                } 
+            }
+            catch (TimeoutException ex)
+            {
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = "Filemon.OverWatch.exe",
@@ -88,11 +100,6 @@ namespace Filemon
                 {
                     if (process != null)
                     {
-                        // Wait for a moment to ensure the process ID is available
-                        System.Threading.Thread.Sleep(100);
-
-                        File.WriteAllText(Constants.FilemonFileName, process.Id.ToString());
-                        Console.WriteLine(process.Id.ToString());
                         Console.WriteLine("Filemon Started Successfully");
                     }
                     else

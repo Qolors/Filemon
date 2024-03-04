@@ -1,6 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Filemon.OverWatch
 {
@@ -22,9 +20,11 @@ namespace Filemon.OverWatch
         {
             List<string> directories = new List<string>();
 
-            if (File.Exists(Constants.ConfigFileName))
+            string configPath = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "AppData", "Local", "Filemon", Constants.ConfigFileName);
+
+            if (File.Exists(configPath))
             {
-                using StreamReader sr = new StreamReader(Constants.ConfigFileName);
+                using StreamReader sr = new StreamReader(configPath);
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
@@ -38,9 +38,12 @@ namespace Filemon.OverWatch
 
         private static void LoadRuleSets(Dictionary<string, string> ruleSets)
         {
-            if (Directory.Exists("rulesets"))
+            string rulesetPath = Path.Combine(Environment
+                .GetEnvironmentVariable("USERPROFILE"), "AppData", "Local", "Filemon", "scripts");
+
+            if (Directory.Exists(rulesetPath))
             {
-                foreach (string file in Directory.EnumerateFiles("rulesets", "*.bat"))
+                foreach (string file in Directory.EnumerateFiles(rulesetPath, "*.bat"))
                 {
                     string key = Path.GetFileNameWithoutExtension(file).Trim().Replace(" ", "_");
                     ruleSets.Add(key, Path.GetFullPath(file));

@@ -21,12 +21,14 @@ namespace Filemon
         {
             try
             {
-                if (!File.Exists(Constants.ConfigFileName))
+                string filepath = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), "AppData", "Local", "Filemon", Constants.ConfigFileName);
+
+                if (!File.Exists(filepath))
                 {
-                    File.Create(Constants.ConfigFileName).Close();
+                    File.Create(filepath).Close();
                 }
 
-                using (StreamWriter sw = File.AppendText(Constants.ConfigFileName))
+                using (StreamWriter sw = File.AppendText(filepath))
                 {
                     sw.WriteLine(path);
                 }

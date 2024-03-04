@@ -1,18 +1,15 @@
-﻿using System;
-using System.IO;
-
+﻿
 namespace Filemon.OverWatch
 {
     public static class Logger
     {
         private static readonly object logFileLock = new object();
-
+        private static readonly string logFilePath = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"),"AppData", "Local", "Filemon", "filemonlogs.txt");
         public static void InitializeLogs()
         {
             try
             {
-                File.Create(Constants.FilemonFileName).Close();
-                File.Create("filemonlogs.txt").Close();
+                File.Create(logFilePath).Close();
                 WriteToLog("Filemon is Running");
                 WriteToLog("filemon.txt file path: " + Path.GetFullPath(Constants.FilemonFileName));
             }
@@ -28,7 +25,7 @@ namespace Filemon.OverWatch
             {
                 try
                 {
-                    using (StreamWriter sw = File.AppendText("filemonlogs.txt"))
+                    using (StreamWriter sw = File.AppendText(logFilePath))
                     {
                         sw.WriteLine(line);
                     }

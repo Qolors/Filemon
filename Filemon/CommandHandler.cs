@@ -26,7 +26,7 @@ namespace Filemon
                     case "start":
                         ProcessManager.Start();
                         break;
-                    case "return":
+                    case "kill":
                         ProcessManager.Kill();
                         break;
                     default:
