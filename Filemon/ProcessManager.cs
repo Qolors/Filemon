@@ -32,7 +32,7 @@ namespace Filemon
             catch (Exception ex)
             {
                 Console.WriteLine("Filemon Status: Not Running");
-            }   
+            }
         }
 
         public static void Kill()
@@ -63,7 +63,7 @@ namespace Filemon
                     {
                         Console.WriteLine("Filemon is Not Running");
                     }
-                } 
+                }
             }
             catch (Exception ex)
             {
@@ -83,8 +83,8 @@ namespace Filemon
                     {
                         Console.WriteLine("Filemon is already running");
                     }
-                    
-                } 
+
+                }
             }
             catch (TimeoutException ex)
             {
@@ -112,6 +112,11 @@ namespace Filemon
             {
                 Console.WriteLine("Error during start operation: " + ex.Message);
             }
+        }
+
+        public static void Log()
+        {
+
         }
     }
 }

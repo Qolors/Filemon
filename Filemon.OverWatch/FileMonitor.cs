@@ -21,7 +21,7 @@ namespace Filemon.OverWatch
             FileSystemWatcher watcher = new FileSystemWatcher(directory)
             {
                 EnableRaisingEvents = true,
-                IncludeSubdirectories = true
+                IncludeSubdirectories = false
             };
 
             watcher.Created += (sender, e) => OnChanged(sender, e, _ruleSets);
@@ -41,10 +41,11 @@ namespace Filemon.OverWatch
                 using (var serverClient = new NamedPipeServerStream("FilemonPipe"))
                 {
                     serverClient.WaitForConnection();
-                    
+
                     try
                     {
                         byte[] buffer = new byte[1024];
+
                         int bytesRead = serverClient.Read(buffer, 0, buffer.Length);
 
                         string message = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
@@ -52,16 +53,26 @@ namespace Filemon.OverWatch
                         if (message == "status")
                         {
                             string response = "Running";
+
                             byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes(response);
+
                             serverClient.Write(responseBytes, 0, responseBytes.Length);
                         }
                         else if (message == "kill")
                         {
-                            string response = "stopped";
+                            string response = "Stopped";
+
                             byte[] responseBytes = System.Text.Encoding.UTF8.GetBytes(response);
+
                             serverClient.Write(responseBytes, 0, responseBytes.Length);
-                            
+
+                            Logger.DeleteLogs();
+
                             break;
+                        }
+                        else if (message == "logs")
+                        {
+
                         }
                     }
                     catch (Exception ex)
@@ -69,7 +80,7 @@ namespace Filemon.OverWatch
                         Logger.WriteToLog("Error processing client: " + ex.Message);
                     }
                 }
-            }   
+            }
         }
 
         private static void OnChanged(object sender, FileSystemEventArgs e, Dictionary<string, string> ruleSets)
