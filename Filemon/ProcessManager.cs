@@ -116,7 +116,19 @@ namespace Filemon
 
         public static void Log()
         {
+          string filelog = "filemon.txt";
 
+          if (!File.Exists(filelog))
+          {
+            Console.WriteLine("No Log File Exists.");
+            return;
+          }
+
+          List<string> filelogs = File.ReadLines(filelog).ToList();
+          foreach (string line in filelogs)
+          {
+            Console.WriteLine(line);
+          }
         }
     }
 }

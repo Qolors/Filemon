@@ -28,6 +28,9 @@ namespace Filemon
                     case "kill":
                         ProcessManager.Kill();
                         break;
+                    case "logs":
+                        ProcessManager.Log();
+                        break;
                     default:
                         Console.WriteLine("Invalid command. Available commands: monitor, status, start, return");
                         break;
